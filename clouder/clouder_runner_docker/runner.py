@@ -55,7 +55,8 @@ class ClouderImage(models.Model):
 
             if self.type_id:
                 if self.type_id.name in [
-                    'backup', 'salt-master', 'salt-minion'
+                    'salt-master', 'salt-minion'
+                    # 'backup', 'salt-master', 'salt-minion'
                 ]:
                     sources_path = os.path.join(
                         modules.get_module_path('clouder'), 'sources',
@@ -77,7 +78,7 @@ class ClouderImage(models.Model):
             docker_file = os.path.join(build_dir, 'Dockerfile')
             node.execute([
                 'echo "%s" >> "%s"' % (
-                    self.computed_dockerfile.replace('"', r'\"'),
+                    self.computed_dockerfile.replace('\\','\\ ').replace('$','\\$').replace('"', r'\"'),
                     docker_file,
                 ),
             ])

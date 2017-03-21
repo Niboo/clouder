@@ -36,7 +36,7 @@ class ClouderConfigSettings(models.Model):
         required=True, default='ssh')
     compose = fields.Boolean('Compose? (Experimental)', default=False)
     end_reset_keys = fields.Datetime('Last Reset Keys ended at')
-    end_backup_all = fields.Datetime('Last Backup All ended at')
+    #end_backup_all = fields.Datetime('Last Backup All ended at')
     end_update_services = fields.Datetime('Last Update Services ended at')
     end_reset_bases = fields.Datetime('Last Reset Bases ended at')
     end_certs_renewal = fields.Datetime('Last Certs Renewal ended at')
@@ -86,113 +86,113 @@ class ClouderConfigSettings(models.Model):
                 "digits, underscore, - and @",
             )
 
-    @api.multi
-    def backup_all(self):
-        self.do('backup_all', 'backup_all_exec')
+    # @api.multi
+    # def backup_all(self):
+    #     self.do('backup_all', 'backup_all_exec')
+    #
+    # @api.multi
+    # def backup_all_exec(self):
+    #     """
+    #     Execute some maintenance on backup services, and force a backup
+    #     on all services and bases.
+    #     """
+    #
+    #     context = {
+    #         'backup_comment': 'Backup before upload_backup',
+    #     }
+    #
+    #     with self.with_context(**context).private_env() as self:
+    #
+    #         backup_dir = os.path.join(self.BACKUP_DIR, 'bup')
+    #         ClouderService = self.env['clouder.service']
+    #         ServiceLink = self.env['clouder.service.link']
+    #         ClouderBase = self.env['clouder.base'].with_context(**context)
+    #
+    #         backups = ClouderService.search([
+    #             ('application_id.type_id.name', '=', 'backup'),
+    #         ])
+    #         for backup in backups:
+    #             backup.execute([
+    #                 'export BUP_DIR="%s";' % backup_dir,
+    #                 'bup', 'fsck', '-r',
+    #             ],
+    #                 username="backup",
+    #             )
+    #             # http://stackoverflow.com/questions/1904860/
+    #             #     how-to-remove-unreferenced-blobs-from-my-git-repo
+    #             # https://github.com/zoranzaric/bup/tree/tmp/gc/Documentation
+    #             # https://groups.google.com/forum/#!topic/bup-list/uvPifF_tUVs
+    #             backup.execute(
+    #                 ['git', 'gc', '--prune=now'],
+    #                 backup_dir,
+    #                 username="backup",
+    #             )
+    #             backup.execute([
+    #                 'export BUP_DIR="%s";' % backup_dir, 'bup', 'fsck', '-g',
+    #             ],
+    #                 username="backup",
+    #             )
+    #
+    #         domain = [('auto_backup', '=', True)]
+    #
+    #         services = ClouderService.search(domain)
+    #         for service in services:
+    #             service.backup_exec()
+    #
+    #         bases = ClouderBase.search(domain)
+    #         for base in bases:
+    #             base.backup_exec()
+    #
+    #         links = ServiceLink.search([
+    #             ('service_id.application_id.type_id.name', '=', 'backup'),
+    #             ('name.code', '=', 'backup-upload'),
+    #         ])
+    #         for link in links:
+    #             link.deploy_exec()
+    #
+    #         now = fields.Datetime.now()
+    #
+    #         for rec_id in self:
+    #             rec_id.settings_id.end_backup_all = now
 
-    @api.multi
-    def backup_all_exec(self):
-        """
-        Execute some maintenance on backup services, and force a backup
-        on all services and bases.
-        """
+    # @api.multi
+    # def purge_expired_backups(self):
+    #     self.do('purge_expired_backups', 'purge_expired_backups_exec')
 
-        context = {
-            'backup_comment': 'Backup before upload_backup',
-        }
+    # @api.multi
+    # def purge_expired_backups_exec(self):
+    #     """
+    #     Purge all expired backups.
+    #     """
+    #     self.env['clouder.backup'].search([
+    #         ('date_expiration', '!=', False),
+    #         ('date_expiration', '<', self.now_date)]).unlink()
 
-        with self.with_context(**context).private_env() as self:
+    # @api.multi
+    # def launch_next_backups(self):
+    #     self = self.with_context(no_enqueue=True)
+    #     self.do('launch_next_backups', 'launch_next_backups_exec')
 
-            backup_dir = os.path.join(self.BACKUP_DIR, 'bup')
-            ClouderService = self.env['clouder.service']
-            ServiceLink = self.env['clouder.service.link']
-            ClouderBase = self.env['clouder.base'].with_context(**context)
-
-            backups = ClouderService.search([
-                ('application_id.type_id.name', '=', 'backup'),
-            ])
-            for backup in backups:
-                backup.execute([
-                    'export BUP_DIR="%s";' % backup_dir,
-                    'bup', 'fsck', '-r',
-                ],
-                    username="backup",
-                )
-                # http://stackoverflow.com/questions/1904860/
-                #     how-to-remove-unreferenced-blobs-from-my-git-repo
-                # https://github.com/zoranzaric/bup/tree/tmp/gc/Documentation
-                # https://groups.google.com/forum/#!topic/bup-list/uvPifF_tUVs
-                backup.execute(
-                    ['git', 'gc', '--prune=now'],
-                    backup_dir,
-                    username="backup",
-                )
-                backup.execute([
-                    'export BUP_DIR="%s";' % backup_dir, 'bup', 'fsck', '-g',
-                ],
-                    username="backup",
-                )
-
-            domain = [('auto_backup', '=', True)]
-
-            services = ClouderService.search(domain)
-            for service in services:
-                service.backup_exec()
-
-            bases = ClouderBase.search(domain)
-            for base in bases:
-                base.backup_exec()
-
-            links = ServiceLink.search([
-                ('service_id.application_id.type_id.name', '=', 'backup'),
-                ('name.code', '=', 'backup-upload'),
-            ])
-            for link in links:
-                link.deploy_exec()
-
-            now = fields.Datetime.now()
-
-            for rec_id in self:
-                rec_id.settings_id.end_backup_all = now
-
-    @api.multi
-    def purge_expired_backups(self):
-        self.do('purge_expired_backups', 'purge_expired_backups_exec')
-
-    @api.multi
-    def purge_expired_backups_exec(self):
-        """
-        Purge all expired backups.
-        """
-        self.env['clouder.backup'].search([
-            ('date_expiration', '!=', False),
-            ('date_expiration', '<', self.now_date)]).unlink()
-
-    @api.multi
-    def launch_next_backups(self):
-        self = self.with_context(no_enqueue=True)
-        self.do('launch_next_backups', 'launch_next_backups_exec')
-
-    @api.multi
-    def launch_next_backups_exec(self):
-        """
-        Backup all services and bases which passed their next backup date.
-        """
-        self = self.with_context(no_enqueue=True, backup_comment='Auto backup')
-        services = self.env['clouder.service'].search([
-            ('auto_backup', '=', True),
-            ('date_next_backup', '!=', False),
-            ('date_next_backup', '<',
-             self.now_date + ' ' + self.now_hour_regular)])
-        for service in services:
-            service.backup_exec()
-        bases = self.env['clouder.base'].search([
-            ('auto_backup', '=', True),
-            ('date_next_backup', '!=', False),
-            ('date_next_backup', '<',
-             self.now_date + ' ' + self.now_hour_regular)])
-        for base in bases:
-            base.backup_exec()
+    # @api.multi
+    # def launch_next_backups_exec(self):
+    #     """
+    #     Backup all services and bases which passed their next backup date.
+    #     """
+    #     self = self.with_context(no_enqueue=True, backup_comment='Auto backup')
+    #     services = self.env['clouder.service'].search([
+    #         ('auto_backup', '=', True),
+    #         ('date_next_backup', '!=', False),
+    #         ('date_next_backup', '<',
+    #          self.now_date + ' ' + self.now_hour_regular)])
+    #     for service in services:
+    #         service.backup_exec()
+    #     bases = self.env['clouder.base'].search([
+    #         ('auto_backup', '=', True),
+    #         ('date_next_backup', '!=', False),
+    #         ('date_next_backup', '<',
+    #          self.now_date + ' ' + self.now_hour_regular)])
+    #     for base in bases:
+    #         base.backup_exec()
 
     @api.multi
     def update_services(self):
@@ -277,8 +277,8 @@ class ClouderConfigSettings(models.Model):
         Call all actions which shall be executed daily.
         """
         self = self.with_context(no_enqueue=True)
-        self.purge_expired_backups_exec()
-        self.backup_all_exec()
+        # self.purge_expired_backups_exec()
+        # self.backup_all_exec()
         self.reset_bases_exec()
         self.certs_renewal_exec()
         return True

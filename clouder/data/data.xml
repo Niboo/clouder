@@ -5,18 +5,6 @@
             <field name="name">Registry</field>
             <field name="code">registry</field>
         </record>
-        <record id="tag_backup" model="clouder.application.tag">
-            <field name="name">Backup</field>
-            <field name="code">backup</field>
-        </record>
-        <record id="tag_backup_upload" model="clouder.application.tag">
-            <field name="name">Backup Upload</field>
-            <field name="code">backup-upload</field>
-        </record>
-        <record id="tag_no_backup" model="clouder.application.tag">
-            <field name="name">no-backup</field>
-            <field name="code">no-backup</field>
-        </record>
         <record id="tag_database" model="clouder.application.tag">
             <field name="name">Database</field>
             <field name="code">database</field>

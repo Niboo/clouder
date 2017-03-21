@@ -10,7 +10,6 @@ from . import environment
 from . import job
 from . import one_click
 from . import provider
-from . import backup
 from . import node
 from . import template_one_2_many
 
@@ -32,7 +31,6 @@ from . import base_metadata
 from . import base_option
 
 # Config
-from . import config_backup_method
 from . import config_settings
 
 # Service

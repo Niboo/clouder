@@ -518,7 +518,7 @@ class ClouderNode(models.Model):
                     'admin_name': 'admin',
                     'admin_password': 'adminadmin',
                     'ssl_only': True,
-                    'auto_backup': True,
+                    # 'auto_backup': True,
                 })
             return base
 

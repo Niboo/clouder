@@ -41,6 +41,7 @@ class ClouderImage(models.Model):
     port_ids = fields.One2many('clouder.image.port', 'image_id', 'Ports')
     version_ids = fields.One2many(
         'clouder.image.version', 'image_id', 'Versions')
+    current_version = fields.Char('Current version',required=True)
     public = fields.Boolean('Public?')
     partner_id = fields.Many2one(
         'res.partner', 'Manager',

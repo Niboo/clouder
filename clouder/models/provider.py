@@ -39,7 +39,8 @@ class ClouderProvider(models.Model):
         return [
             ('compute', 'Compute'), ('service', 'Service'),
             ('dns', 'DNS'), ('load', 'Load Balancing'),
-            ('backup', 'Backup'), ('smtp', 'SMTP')]
+            # ('backup', 'Backup'),
+            ('smtp', 'SMTP')]
 
     @api.multi
     def _get_providers_compute(self):

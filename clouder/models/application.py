@@ -7,10 +7,11 @@ import os.path
 import re
 
 try:
-    from odoo import models, fields, api
+    from odoo import models, fields, api , _
 except ImportError:
-    from openerp import models, fields, api
+    from openerp import models, fields, api , _
 
+from ..exceptions import ClouderError
 
 class ClouderApplication(models.Model):
     """
@@ -64,23 +65,23 @@ class ClouderApplication(models.Model):
         ('never', 'Never'), ('manual', 'Manual'), ('auto', 'Automatic')],
         string='Service Update Strategy', required=True, default='never')
     update_bases = fields.Boolean('Update bases?')
-    auto_backup = fields.Boolean('Backup?')
-    service_backup_ids = fields.Many2many(
-        'clouder.service', 'clouder_application_service_backup_rel',
-        'application_id', 'backup_id', 'Backups Services')
-    service_time_between_backup = fields.Integer(
-        'Minutes between each service backup', required=True, default=9999)
-    service_backup_expiration = fields.Integer(
-        'Days before service backup expiration', required=True, default=5)
-    base_backup_ids = fields.Many2many(
-        'clouder.service', 'clouder_application_base_backup_rel',
-        'application_id', 'backup_id', 'Backups Bases')
-    base_time_between_backup = \
-        fields.Integer('Minutes between each base backup',
-                       required=True, default=9999)
-    base_backup_expiration = \
-        fields.Integer('Days before base backup expiration',
-                       required=True, default=5)
+    # auto_backup = fields.Boolean('Backup?')
+    # service_backup_ids = fields.Many2many(
+    #     'clouder.service', 'clouder_application_service_backup_rel',
+    #     'application_id', 'backup_id', 'Backups Services')
+    # service_time_between_backup = fields.Integer(
+    #     'Minutes between each service backup', required=True, default=9999)
+    # service_backup_expiration = fields.Integer(
+    #     'Days before service backup expiration', required=True, default=5)
+    # base_backup_ids = fields.Many2many(
+    #     'clouder.service', 'clouder_application_base_backup_rel',
+    #     'application_id', 'backup_id', 'Backups Bases')
+    # base_time_between_backup = \
+    #     fields.Integer('Minutes between each base backup',
+    #                    required=True, default=9999)
+    # base_backup_expiration = \
+    #     fields.Integer('Days before base backup expiration',
+    #                    required=True, default=5)
     public = fields.Boolean('Public?')
     partner_id = fields.Many2one(
         'res.partner', 'Manager',
@@ -262,3 +263,20 @@ class ClouderApplication(models.Model):
                         ('template_id', '=', template.id)]):
                     link.reset_template(records=[self])
         return res
+
+    #Ajout spécial
+    @api.multi
+    def raise_error(self, message, interpolations=None):
+        """ Raises a ClouderError with a translated message
+        :param message: (str) Message including placeholders for string
+            interpolation. Interpolation takes place via the ``%`` operator.
+        :param interpolations: (dict|tuple) Mixed objects to be used for
+            string interpolation after message translation. Dict for named
+            parameters or tuple for positional. Cannot use both.
+        :raises: (clouder.exceptions.ClouderError)
+        """
+        if interpolations is None:
+            interpolations = ()
+        elif isinstance(interpolations, basestring):
+            interpolations = (interpolations, )
+        raise ClouderError(self, _(message) % interpolations)

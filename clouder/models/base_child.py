@@ -35,8 +35,8 @@ class ClouderBaseChild(models.Model):
         'clouder.service', 'Service')
     child_id = fields.Many2one(
         'clouder.service', 'Service')
-    backup_id = fields.Many2one('clouder.backup',
-                                'Restore this backup on deployment')
+    #backup_id = fields.Many2one('clouder.backup',
+    #                            'Restore this backup on deployment')
 
     _order = 'sequence'
 
@@ -70,10 +70,10 @@ class ClouderBaseChild(models.Model):
             'application_id': self.name.id,
             'service_id': self.service_id.id
         })
-        if self.backup_id:
-            self.backup_id.service_id = self.child_id.service_id
-            self.backup_id.base_id = self.child_id
-            self.backup_id.restore()
+        # if self.backup_id:
+        #     self.backup_id.service_id = self.child_id.service_id
+        #     self.backup_id.base_id = self.child_id
+        #     self.backup_id.restore()
 
     @api.multi
     def delete_child(self):

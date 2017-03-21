@@ -46,10 +46,10 @@ class ClouderModel(models.AbstractModel):
 
     _autodeploy = True
 
-    BACKUP_BASE_DIR = '/base-backup/'
-    BACKUP_DATA_DIR = '/opt/backup/'
-    BACKUP_HOME_DIR = '/home/backup/'
-    BACKUP_DATE_FILE = 'backup-date'
+    # BACKUP_BASE_DIR = '/base-backup/'
+    # BACKUP_DATA_DIR = '/opt/backup/'
+    # BACKUP_HOME_DIR = '/home/backup/'
+    # BACKUP_DATE_FILE = 'backup-date'
 
     # We create the name field to avoid warning for the constraints
     name = fields.Char('Name', required=True)

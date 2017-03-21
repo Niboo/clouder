@@ -17,10 +17,6 @@
         'data/data.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
-        'clouder_template_backup/template.xml',
-        'clouder_template_registry/template.xml',
-        'clouder_template_salt/template.xml',
-        'clouder_runner_docker/template.xml',
     ],
     'external_dependencies': {
         'python': [

@@ -28,7 +28,7 @@ class ClouderServiceVolume(models.Model):
     hostpath = fields.Char('Host path')
     user = fields.Char('System User')
     readonly = fields.Boolean('Readonly?')
-    no_backup = fields.Boolean('No backup?')
+    # no_backup = fields.Boolean('No backup?')
 
     _sql_constraints = [
         ('name_uniq', 'unique(service_id,name)',
