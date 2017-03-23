@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- apptype -->
+        <record id="tag_gitlabci" model="clouder.application.tag">
+            <field name="name">Gitlab CI</field>
+            <field name="code">gitlabci</field>
+        </record>
+        <record id="application_type_gitlabci" model="clouder.application.type">
+            <field name="name">gitlabci</field>
+            <field name="system_user">git</field>
+        </record>
+        <record id="application_type_gitlab_option_concurrent" model="clouder.application.type.option">
+            <field name="application_type_id" ref="application_type_gitlabci"/>
+            <field name="name">concurrent</field>
+            <field name="type">service</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('clouder.tag_data')])]"/>
+            <field name="auto" eval="True"/>
+            <field name="default">2</field>
+        </record>
+
+        <!-- image "exec" repository -->
+        <record id="image_template_gitlabci" model="clouder.image.template">
+            <field name="name">image_template_gitlabci</field>
+        </record>
+        <record id="image_template_gitlabci_volume_docker" model="clouder.image.volume">
+            <field name="template_id" ref="image_template_gitlabci"/>
+            <field name="name">docker</field>
+            <field name="localpath">/var/run/docker.sock</field>
+            <field name="hostpath">/var/run/docker.sock</field>
+            <field name="readonly" eval="True"/>
+            <field name="no_backup" eval="True"/>
+        </record>
+        <record id="image_gitlabci" model="clouder.image">
+            <field name="name">image_gitlabci</field>
+            <field name="type_id" ref="application_type_gitlabci"/>
+            <field name="template_ids" eval="[(4, [ref('image_template_gitlabci')])]"/>
+            <field name="parent_from">gitlab/gitlab-runner:latest</field>
+            <field name="parent_id"/>
+            <field name="dockerfile"/>
+        </record>
+
+
+        <record id="application_template_gitlabci" model="clouder.application.template">
+            <field name="name">Gitlab CI</field>
+        </record>
+        <record id="application_template_gitlabci_link_gitlab" model="clouder.application.link">
+            <field name="template_id" ref="application_template_gitlabci"/>
+            <field name="name" ref="tag_gitlabci"/>
+            <field name="required" eval="True"/>
+            <field name="auto" eval="True"/>
+            <field name="service" eval="True"/>
+        </record>
+        <record id="application_gitlabci" model="clouder.application">
+            <field name="name">Gitlab CI</field>
+            <field name="code">gitlabci</field>
+            <field name="type_id" ref="application_type_gitlabci"/>
+            <field name="tag_ids" eval="[(4, [ref('tag_gitlabci')])]"/>
+            <field name="template_ids" eval="[(4, [ref('application_template_gitlabci')])]"/>
+            <field name="default_image_id" ref="image_gitlabci"/>
+        </record>
+
+
+    </data>
+</odoo>
+
